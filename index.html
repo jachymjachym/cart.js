@@ -1,0 +1,134 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    
+  </head>
+    
+    <style>
+        
+    </style>
+    
+  <body>  
+      <div class="cart">
+          
+      </div>
+      
+      
+      <div class="item" data-id="20">
+          <div class="item-name">Sprej na zastavovani rozjetych kolotocu</div>
+          <div class="item-price">5$</div>
+          <div class="item-count">2</div>
+          
+          <button class="buy">Koupit</button>
+      </div>
+      
+      <div class="item" data-id="22">
+          <div class="item-name">Sprej na likvidaci facebookovych statusu</div>
+          <div class="item-price">10$</div>
+          <div class="item-count">1</div>
+          
+          <button class="buy">Koupit</button>
+      </div>
+      
+      <div class="item" data-id="23">
+          <div class="item-name">Sprej na odstraneni pilin z hlavy nacistickych kryptofasistu</div>
+          <div class="item-price">10$</div>
+          <div class="item-count">1</div>
+          
+          <button class="buy">Koupit</button>
+      </div>
+      
+      <button id="send">send</button>
+      <button id="get">get</button>
+      <script>
+          
+          //closest polyfill, kterej potrebuji na detekovani rodice buy buttonu
+          if (window.Element && !Element.prototype.closest) {
+              Element.prototype.closest = 
+              function(s) {
+                  var matches = (this.document || this.ownerDocument).querySelectorAll(s),
+                      i,
+                      el = this;
+                  do {
+                      i = matches.length;
+                      while (--i >= 0 && matches.item(i) !== el) {};
+                  } while ((i < 0) && (el = el.parentElement)); 
+                  return el;
+              };
+            }
+          
+          
+          var buy = document.querySelectorAll('.buy');
+          
+          var cartContent = JSON.parse(sessionStorage.getItem('cart'));
+          
+          if(cartContent == null){
+              cartContent = [];
+          }
+          
+          
+          
+          
+          
+          buy.forEach(function(el, index, array){
+              el.addEventListener('click', function(){
+                  
+                  var parent = this.closest('.item');
+                  var name = parent.querySelector('.item-name');
+                  var price = parent.querySelector('.item-price');
+                  var count = parent.querySelector('.item-count');
+                  var idText = parent.getAttribute('data-id');
+                  var idNum = parseFloat(parent.getAttribute('data-id'));
+                  
+                  var item = JSON.stringify({
+                    
+                    id: idNum,
+                    name: name.innerHTML,
+                    price: price.innerHTML,
+                    count: count.innerHTML,
+                    name: name.innerHTML,
+                  });
+                    
+                  console.log(idNum);
+                  console.log(idText);
+                  console.log(cartContent.indexOf(idNum));
+                  if(JSON.parse(sessionStorage.getItem('cart')).id === idNum){
+                      return;
+                  } else {
+                        cartContent.push(item);
+                        sessionStorage.setItem('cart', JSON.stringify(cartContent));
+                  }
+                  
+                                          
+                  
+                  
+                    
+                  
+                    
+                    
+              });
+                
+          });
+          
+          function putItemToCart(){
+
+              for(var i=0; i < cartContent.length; i++){
+                  var elem = document.createElement('p');
+                  var para = document.querySelector('.cart').appendChild(elem);
+                  console.log(JSON.parse(cartContent[i]));
+                  para.innerHTML = JSON.parse(cartContent[i]).name;
+              }
+          }
+          
+          putItemToCart();
+          
+          
+          
+          
+          
+            
+      </script>
+  </body>
+    
+</html>  
