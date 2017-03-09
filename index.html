@@ -58,13 +58,26 @@
               };
             }
           
+          Array.prototype.searchFor = function(candid) {
+            for (var i=0; i<this.length; i++)
+                if (this[i].indexOf(candid) == 0)
+                    return i;
+            return -1;
+        };
+          
+          Object.prototype.cartObjString = function(id, name, price, count ){
+              return id + name + price + count;
+          }
+          
           
           var buy = document.querySelectorAll('.buy');
           
           var cartContent = JSON.parse(sessionStorage.getItem('cart'));
+          var cartStrings = JSON.parse(sessionStorage.getItem('cartStrings'));
           
           if(cartContent == null){
               cartContent = [];
+              cartStrings = [];
           }
           
           
@@ -81,47 +94,46 @@
                   var idText = parent.getAttribute('data-id');
                   var idNum = parseFloat(parent.getAttribute('data-id'));
                   
-                  var item = JSON.stringify({
+                  var item = {
                     
                     id: idNum,
                     name: name.innerHTML,
                     price: price.innerHTML,
                     count: count.innerHTML,
-                    name: name.innerHTML,
-                  });
                     
-                  console.log(idNum);
-                  console.log(idText);
-                  console.log(cartContent.indexOf(idNum));
-                  if(JSON.parse(sessionStorage.getItem('cart')).id === idNum){
-                      return;
+                  };
+                  
+                  var uglied = item.cartObjString(item.id, item.name, item.price, item.count);
+                  
+                  if(cartStrings.searchFor(idText) != -1){
+                      console.log('nepridam');
                   } else {
-                        cartContent.push(item);
-                        sessionStorage.setItem('cart', JSON.stringify(cartContent));
+                      
+                      cartContent.push(item);
+                      cartStrings.push(uglied);
+                      
+                      sessionStorage.setItem('cart', JSON.stringify(cartContent));
+                      sessionStorage.setItem('cartStrings', JSON.stringify(cartStrings));
+                      
+                      
                   }
                   
-                                          
                   
+                console.log(cartContent);
                   
-                    
-                  
-                    
+//                    document.getElementsByClassName('cart').innerHTML = addItemToCart();
                     
               });
                 
           });
           
-          function putItemToCart(){
-
-              for(var i=0; i < cartContent.length; i++){
-                  var elem = document.createElement('p');
-                  var para = document.querySelector('.cart').appendChild(elem);
-                  console.log(JSON.parse(cartContent[i]));
-                  para.innerHTML = JSON.parse(cartContent[i]).name;
-              }
+          function addItemToCart(){
+              
+              
+              
           }
           
-          putItemToCart();
+
           
           
           
