@@ -58,6 +58,7 @@
               };
             }
           
+          //projede array a podiva se jestli v nem existuje urcity vyraz
           Array.prototype.searchFor = function(candid) {
             for (var i=0; i<this.length; i++)
                 if (this[i].indexOf(candid) == 0)
@@ -65,12 +66,14 @@
             return -1;
         };
           
+          // udelas z objektu string
           Object.prototype.cartObjString = function(id, name, price, count ){
               return id + name + price + count;
           }
           
           
           var buy = document.querySelectorAll('.buy');
+          
           
           var cartContent = JSON.parse(sessionStorage.getItem('cart'));
           var cartStrings = JSON.parse(sessionStorage.getItem('cartStrings'));
@@ -86,7 +89,7 @@
           
           buy.forEach(function(el, index, array){
               el.addEventListener('click', function(){
-                  
+                  console.log('add')
                   var parent = this.closest('.item');
                   var name = parent.querySelector('.item-name');
                   var price = parent.querySelector('.item-price');
@@ -115,14 +118,23 @@
                       sessionStorage.setItem('cart', JSON.stringify(cartContent));
                       sessionStorage.setItem('cartStrings', JSON.stringify(cartStrings));
                       
+                      var newElement = document.createElement('div');
+                      var btn = document.createElement('button');
+                        btn.classList.add('delete');
+                        btn.innerHTML = 'Vymazat';
+                      newElement.classList.add('item');
+                       newElement.setAttribute('data-id', cartContent[cartContent.length - 1].id);
+                    
+                        newElement.innerHTML = '<div class="item-name">' + cartContent[cartContent.length - 1].name + '</div>' + 
+                        '<div class="item-price">' + cartContent[cartContent.length - 1].price + '</div>' + 
+                        '<div class="item-count">' + cartContent[cartContent.length - 1].count + '</div>';
+                      
+                      newElement.appendChild(btn);
+                      
+                        document.querySelector('.cart').appendChild(newElement);
                       
                   }
-                  
-                  
-                console.log(cartContent);
-                  
-//                    document.getElementsByClassName('cart').innerHTML = addItemToCart();
-                    
+                   
               });
                 
           });
@@ -130,8 +142,66 @@
           function addItemToCart(){
               
               
+                for (var i=0; i < cartContent.length; i++) {
+                    var newElement = document.createElement('div');
+                    var btn = document.createElement('button');
+                    btn.classList.add('delete');
+                    btn.innerHTML = 'Vymazat';
+                    newElement.classList.add('item');
+                    newElement.setAttribute('data-id', cartContent[i].id);
+                    
+                    newElement.innerHTML = '<div class="item-name">' + cartContent[i].name + '</div>' + 
+                                            '<div class="item-price">' + cartContent[i].price + '</div>' + 
+                                            '<div class="item-count">' + cartContent[i].count + '</div>';
+                    newElement.appendChild(btn);
+                    
+                    document.querySelector('.cart').appendChild(newElement);
+                    
+                    
+                } 
+              
               
           }
+          
+          addItemToCart();
+          
+          
+          
+          
+          
+          
+              document.addEventListener('click', function(e){
+                  if(e.target.classList.contains('delete')){
+                      var item = e.target.parentElement;
+                      var itemIdStr = item.getAttribute('data-id');
+                      var itemID = parseFloat(itemIdStr);
+
+                      var cart = item.parentElement;
+                      cart.removeChild(item);
+
+                      function getByValue(arr, value) {
+
+                          for (var i=0, iLen=arr.length; i<iLen; i++) {
+
+                            if (arr[i].id == value) return i;
+                          }
+                        }
+
+
+  
+                      cartContent.splice(getByValue(cartContent, itemID), 1);
+                      cartStrings.splice(cartStrings.searchFor(itemIdStr), 1);
+
+                      sessionStorage.setItem('cart', JSON.stringify(cartContent));
+                      sessionStorage.setItem('cartStrings', JSON.stringify(cartStrings));
+                  }
+                  
+                  
+
+              });
+          
+          
+          
           
 
           
