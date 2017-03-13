@@ -6,211 +6,117 @@
   </head>
     
     <style>
+        .cart {
+            background: #ddd;
+            width: 100%;
+            padding: 30px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        .items {
+            padding: 10px;
+            background: #fff;
+            overflow: hidden;
+        }
+        .items > div {
+            border-bottom: 1px solid #ddd;
+            padding: 10px;
+            overflow: hidden
+        }
         
+        .items > div:last-child {
+            border-bottom: none;
+        }
+        
+        .items > div div {
+            float: left;
+            margin: 0 10px;
+        }
+        .items > div button {
+            float: right;
+            border: none;
+            background-color: crimson;
+            color: #fff;
+            padding: 5px;
+        }
+        
+        .clear {
+            float: right;
+            border: none;
+            background-color: darkred;
+            color: #fff;
+            padding: 5px;
+            margin: 10px;
+        }
+        .checkout {
+            float: left;
+            border: none;
+            background-color: darkgreen;
+            color: #fff;
+            padding: 5px;
+            margin: 10px;
+        }
+        
+        .row .item {
+            width: 25%;
+            margin: 15px 2%;
+            float: left;
+        }
+        
+        .row .item button {
+            border: none;
+            background-color: forestgreen;
+            color: white;
+            padding: 5px;
+            margin: 10px;
+        }
+        
+        .row .item input {
+            width: 40px;
+            padding: 5px;
+        }
     </style>
     
   <body>  
       <div class="cart">
-          
+          <div class="items"></div>
+          <button class="clear">Remove All</button>
+          <button class="checkout">Checkout</button>
+      </div>
+      
+      <div class="row">
+          <div class="item" data-id="20">
+              <div class="item-name">Rolling Stones standing place</div>
+              <div class="item-price">5$</div>
+              <div class="item-count">
+                  <input type="number">
+              </div>
+              <button class="buy">Buy</button>
+          </div>
+
+          <div class="item" data-id="22">
+              <div class="item-name">U2 Joshua Tree tour Berlin sitzplatz</div>
+              <div class="item-price">10$</div>
+              <div class="item-count">
+                  <input type="number">
+              </div>
+              <button class="buy">Buy</button>
+          </div>
+
+          <div class="item" data-id="23">
+              <div class="item-name">Midnight oilers Sydney couchseat 2 right behind wife</div>
+              <div class="item-price">10$</div>
+              <div class="item-count">
+                  <input type="number">
+              </div>
+              <button class="buy">Buy</button>
+          </div>
       </div>
       
       
-      <div class="item" data-id="20">
-          <div class="item-name">Sprej na zastavovani rozjetych kolotocu</div>
-          <div class="item-price">5$</div>
-          <div class="item-count">2</div>
-          
-          <button class="buy">Koupit</button>
-      </div>
       
-      <div class="item" data-id="22">
-          <div class="item-name">Sprej na likvidaci facebookovych statusu</div>
-          <div class="item-price">10$</div>
-          <div class="item-count">1</div>
-          
-          <button class="buy">Koupit</button>
-      </div>
-      
-      <div class="item" data-id="23">
-          <div class="item-name">Sprej na odstraneni pilin z hlavy nacistickych kryptofasistu</div>
-          <div class="item-price">10$</div>
-          <div class="item-count">1</div>
-          
-          <button class="buy">Koupit</button>
-      </div>
-      
-      <button id="send">send</button>
-      <button id="get">get</button>
-      <script>
-          
-          //closest polyfill, kterej potrebuji na detekovani rodice buy buttonu
-          if (window.Element && !Element.prototype.closest) {
-              Element.prototype.closest = 
-              function(s) {
-                  var matches = (this.document || this.ownerDocument).querySelectorAll(s),
-                      i,
-                      el = this;
-                  do {
-                      i = matches.length;
-                      while (--i >= 0 && matches.item(i) !== el) {};
-                  } while ((i < 0) && (el = el.parentElement)); 
-                  return el;
-              };
-            }
-          
-          //projede array a podiva se jestli v nem existuje urcity vyraz
-          Array.prototype.searchFor = function(candid) {
-            for (var i=0; i<this.length; i++)
-                if (this[i].indexOf(candid) == 0)
-                    return i;
-            return -1;
-        };
-          
-          // udelas z objektu string
-          Object.prototype.cartObjString = function(id, name, price, count ){
-              return id + name + price + count;
-          }
-          
-          
-          var buy = document.querySelectorAll('.buy');
-          
-          
-          var cartContent = JSON.parse(sessionStorage.getItem('cart'));
-          var cartStrings = JSON.parse(sessionStorage.getItem('cartStrings'));
-          
-          if(cartContent == null){
-              cartContent = [];
-              cartStrings = [];
-          }
-          
-          
-          
-          
-          
-          buy.forEach(function(el, index, array){
-              el.addEventListener('click', function(){
-                  console.log('add')
-                  var parent = this.closest('.item');
-                  var name = parent.querySelector('.item-name');
-                  var price = parent.querySelector('.item-price');
-                  var count = parent.querySelector('.item-count');
-                  var idText = parent.getAttribute('data-id');
-                  var idNum = parseFloat(parent.getAttribute('data-id'));
-                  
-                  var item = {
-                    
-                    id: idNum,
-                    name: name.innerHTML,
-                    price: price.innerHTML,
-                    count: count.innerHTML,
-                    
-                  };
-                  
-                  var uglied = item.cartObjString(item.id, item.name, item.price, item.count);
-                  
-                  if(cartStrings.searchFor(idText) != -1){
-                      console.log('nepridam');
-                  } else {
-                      
-                      cartContent.push(item);
-                      cartStrings.push(uglied);
-                      
-                      sessionStorage.setItem('cart', JSON.stringify(cartContent));
-                      sessionStorage.setItem('cartStrings', JSON.stringify(cartStrings));
-                      
-                      var newElement = document.createElement('div');
-                      var btn = document.createElement('button');
-                        btn.classList.add('delete');
-                        btn.innerHTML = 'Vymazat';
-                      newElement.classList.add('item');
-                       newElement.setAttribute('data-id', cartContent[cartContent.length - 1].id);
-                    
-                        newElement.innerHTML = '<div class="item-name">' + cartContent[cartContent.length - 1].name + '</div>' + 
-                        '<div class="item-price">' + cartContent[cartContent.length - 1].price + '</div>' + 
-                        '<div class="item-count">' + cartContent[cartContent.length - 1].count + '</div>';
-                      
-                      newElement.appendChild(btn);
-                      
-                        document.querySelector('.cart').appendChild(newElement);
-                      
-                  }
-                   
-              });
-                
-          });
-          
-          function addItemToCart(){
-              
-              
-                for (var i=0; i < cartContent.length; i++) {
-                    var newElement = document.createElement('div');
-                    var btn = document.createElement('button');
-                    btn.classList.add('delete');
-                    btn.innerHTML = 'Vymazat';
-                    newElement.classList.add('item');
-                    newElement.setAttribute('data-id', cartContent[i].id);
-                    
-                    newElement.innerHTML = '<div class="item-name">' + cartContent[i].name + '</div>' + 
-                                            '<div class="item-price">' + cartContent[i].price + '</div>' + 
-                                            '<div class="item-count">' + cartContent[i].count + '</div>';
-                    newElement.appendChild(btn);
-                    
-                    document.querySelector('.cart').appendChild(newElement);
-                    
-                    
-                } 
-              
-              
-          }
-          
-          addItemToCart();
-          
-          
-          
-          
-          
-          
-              document.addEventListener('click', function(e){
-                  if(e.target.classList.contains('delete')){
-                      var item = e.target.parentElement;
-                      var itemIdStr = item.getAttribute('data-id');
-                      var itemID = parseFloat(itemIdStr);
-
-                      var cart = item.parentElement;
-                      cart.removeChild(item);
-
-                      function getByValue(arr, value) {
-
-                          for (var i=0, iLen=arr.length; i<iLen; i++) {
-
-                            if (arr[i].id == value) return i;
-                          }
-                        }
-
-
-  
-                      cartContent.splice(getByValue(cartContent, itemID), 1);
-                      cartStrings.splice(cartStrings.searchFor(itemIdStr), 1);
-
-                      sessionStorage.setItem('cart', JSON.stringify(cartContent));
-                      sessionStorage.setItem('cartStrings', JSON.stringify(cartStrings));
-                  }
-                  
-                  
-
-              });
-          
-          
-          
-          
-
-          
-          
-          
-          
-          
-            
-      </script>
+      <script type="text/javascript" src="app.js"></script>
+      <script type="text/javascript" src="main.js"></script>
   </body>
     
 </html>  
